@@ -21,6 +21,7 @@ phases:
     commands:
       # SonarCloud analysis
       - sonar-scanner -Dsonar.projectKey=arjit547_react-repo123 -Dsonar.organization=arjit547 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN}
+      - aws lambda invoke --function-name sonarlambda output.txt
       # Continue with AWS CodeBuild steps (e.g., deploying artifacts)
      # - aws lambda invoke --function-name sonarlambda --payload '{"detail": {"projectStatus": {"status": "ERROR", "qualityGate": {"conditions": "BUGS"}}}}' output.txt
 
