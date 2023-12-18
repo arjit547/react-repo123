@@ -26,11 +26,11 @@ phases:
 
       # Check if sonar-scanner failed (non-zero exit status)
       - if [ $SONAR_EXIT_STATUS -ne 0 ]; then
-          echo "SonarCloud analysis failed. Sending email notification...";
+          echo "SonarCloud analysis failed. Sending email notification..."
           # Invoke Lambda function with the exit status
           - aws lambda invoke --function-name sonarlambda --payload "{\"exit_status\": $SONAR_EXIT_STATUS}" output.txt
         else
-          echo "SonarCloud analysis succeeded.";
+          echo "SonarCloud analysis succeeded."
       fi
 
 artifacts:
