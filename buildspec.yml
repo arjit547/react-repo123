@@ -22,7 +22,6 @@ phases:
       # SonarCloud analysis
       - sonar-scanner -Dsonar.projectKey=arjit547_react-repo123 -Dsonar.organization=arjit547 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN}
 
-      # AWS Lambda invocation with an example payload
       - aws lambda invoke --function-name sonarlambda --payload '{"detail": {"projectStatus": {"status": "ERROR", "qualityGate": {"conditions": "BUGS"}}}}' output.txt
 
 artifacts:
