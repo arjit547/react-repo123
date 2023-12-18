@@ -17,10 +17,7 @@ phases:
   post_build:
     commands:
       - sonar-scanner -Dsonar.projectKey=arjit547_react-repo123 -Dsonar.organization=arjit547 -Dsonar.host.url=http://your-sonarqube-server -Dsonar.login=${SONAR_TOKEN}
-
-      # Parse the SonarQube analysis report and check for issues
       - SONAR_ISSUES=$(curl -s -u "${SONAR_TOKEN}": -X GET "http://your-sonarqube-server/api/measures/component?component=arjit547_react-repo123&metricKeys=bugs" | jq -r '.component.measures[0].value')
-
       - |
         if [ "$SONAR_ISSUES" -gt 0 ]; then
           echo "SonarQube analysis found $SONAR_ISSUES issues. Invoking Lambda function..."
