@@ -4,7 +4,8 @@ SONAR_ISSUES=$(curl -s -u "${SONAR_TOKEN}": -X GET "https://sonarcloud.io/api/me
 
 if [ "$SONAR_ISSUES" -gt 0 ]; then
   echo "SonarQube analysis found $SONAR_ISSUES issues. Invoking Lambda function..."
-  aws lambda invoke --function-name sonarlambda --payload "{\"exit_status\": 1}" output.txt
+  PAYLOAD='{"exit_status": 1}'
+  aws lambda invoke --function-name sonarlambda --payload "$(echo -n "$PAYLOAD" | base64)" output.txt
 else
   echo "SonarQube analysis succeeded. No issues found."
 fi
