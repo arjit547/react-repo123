@@ -17,6 +17,6 @@ if [ "$SONAR_DETAILS" == "OK" ]; then
   echo "SonarQube analysis passed quality gate. No issues found."
 else
   echo "SonarQube analysis failed quality gate. Invoking Lambda function..."
-  PAYLOAD=$(echo -n "{\"exit_status\": 1, \"quality_gate_status\": \"$SONAR_DETAILS\", \"new_issues\": \"$SONAR_NEW_ISSUES\", \"overall_issues\": \"$SONAR_OVERALL_ISSUES\"}" | base64)
+  PAYLOAD=$(echo -n "{\"exit_status\": 1, \"quality_gate_status\": \"$SONAR_DETAILS\", \"new_code_issues\": \"$SONAR_NEW_ISSUES\", \"overall_code_issues\": \"$SONAR_OVERALL_ISSUES\"}" | base64)
   aws lambda invoke --function-name sonarlambda --payload "$PAYLOAD" output.txt
 fi
