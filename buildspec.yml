@@ -7,7 +7,7 @@ phases:
 
   pre_build:
     commands:
-      - npm install -g sonarqube-scanner
+      - npm install -g sonarqube-scanner@latest
 
   build:
     commands:
