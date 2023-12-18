@@ -1,18 +1,31 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
       nodejs: 12
+
+  pre_build:
     commands:
-      - echo "Installing dependencies..."
+      # Install SonarQube Scanner
       - npm install -g sonarqube-scanner
-      - sonar-scanner -Dsonar.projectKey=arjit547_react-repo123 -Dsonar.organization=arjit547 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${sonar.token}
-      - aws lambda invoke --function-name sonarlambda --payload '{"detail": {"projectStatus": {"status": "ERROR", "qualityGate": {"conditions": "BUGS"}}}}' output.txt
-      - npm install
-      - npm install -g @angular/cli@10.0.8
+
   build:
     commands:
-      - echo "Building Angular project..."
+      # Install Node.js dependencies
+      - npm install
+      # Build the React app
+      - npm run build
+
+  post_build:
+    commands:
+      # SonarCloud analysis
+      - sonar-scanner -Dsonar.projectKey=arjit547_react-repo123 -Dsonar.organization=arjit547 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${sonar.token}
+      - aws lambda invoke --function-name sonarlambda --payload '{"detail": {"projectStatus": {"status": "ERROR", "qualityGate": {"conditions": "BUGS"}}}}' output.txt
+
+
 artifacts:
-  files:
-    - '**/*'
+  files: '**/*'
+  base-directory: build
+  discard-paths: yes
+
