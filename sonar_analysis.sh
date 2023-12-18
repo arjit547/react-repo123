@@ -8,8 +8,10 @@ if [ "$SONAR_ISSUES" -gt 0 ]; then
   # Get detailed issue information
   ISSUES_DETAILS=$(curl -s -u "${SONAR_TOKEN}": -X GET "https://sonarcloud.io/api/issues/search?componentKeys=arjit547_react-repo123&types=BUG&ps=1" | jq -r '.issues[0].message')
 
+  # Create JSON payload
+  PAYLOAD=$(printf '{"exit_status": 1, "issues": "%s"}' "$ISSUES_DETAILS" | base64)
+  
   # Invoke Lambda function with issue details
-  PAYLOAD=$(echo -n "{\"exit_status\": 1, \"issues\": \"$ISSUES_DETAILS\"}" | base64)
   aws lambda invoke --function-name sonarlambda --payload "$PAYLOAD" output.txt
   
 else
