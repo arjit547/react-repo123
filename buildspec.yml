@@ -17,14 +17,8 @@ phases:
   post_build:
     commands:
       - sonar-scanner -Dsonar.projectKey=arjit547_react-repo123 -Dsonar.organization=arjit547 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN}
-      - SONAR_ISSUES=$(curl -s -u "${SONAR_TOKEN}": -X GET "https://sonarcloud.io/api/measures/component?component=arjit547_react-repo123&metricKeys=bugs" | jq -r '.component.measures[0].value')
-      - |
-        if [ "$SONAR_ISSUES" -gt 0 ]; then
-          echo "SonarQube analysis found $SONAR_ISSUES issues. Invoking Lambda function..."
-          aws lambda invoke --function-name sonarlambda --payload "{\"exit_status\": 1}" output.txt
-        else
-          echo "SonarQube analysis succeeded. No issues found."
-        fi
+      - chmod +x sonar_analysis.sh
+      - ./sonar_analysis.sh  # Execute the shell script
 
 artifacts:
   files: '**/*'
