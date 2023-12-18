@@ -19,11 +19,19 @@ phases:
 
   post_build:
     commands:
-      # SonarCloud analysis
+      # Run SonarCloud analysis
       - sonar-scanner -Dsonar.projectKey=arjit547_react-repo123 -Dsonar.organization=arjit547 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN}
-      - aws lambda invoke --function-name sonarlambda output.txt
-      # Continue with AWS CodeBuild steps (e.g., deploying artifacts)
-     # - aws lambda invoke --function-name sonarlambda --payload '{"detail": {"projectStatus": {"status": "ERROR", "qualityGate": {"conditions": "BUGS"}}}}' output.txt
+      # Capture the exit status of sonar-scanner
+      - SONAR_EXIT_STATUS=$?
+
+      # Check if sonar-scanner failed (non-zero exit status)
+      - if [ $SONAR_EXIT_STATUS -ne 0 ]; then
+          echo "SonarCloud analysis failed. Sending email notification...";
+          # Invoke Lambda function with the exit status
+          - aws lambda invoke --function-name sonarlambda --payload "{\"exit_status\": $SONAR_EXIT_STATUS}" output.txt
+        else
+          echo "SonarCloud analysis succeeded.";
+      fi
 
 artifacts:
   files: '**/*'
