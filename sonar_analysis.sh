@@ -1,11 +1,15 @@
 #!/bin/bash
 
-SONAR_ISSUES=$(curl -s -u "${SONAR_TOKEN}": -X GET "https://sonarcloud.io/api/measures/component?component=arjit547_react-repo123&metricKeys=bugs" | jq -r '.component.measures[0].value')
+SONAR_ISSUES_JSON=$(curl -s -u "${SONAR_TOKEN}": -X GET "https://sonarcloud.io/api/issues/search?componentKeys=arjit547_react-repo123&resolved=false" | jq -r '.issues[] | {key, severity, message}')
 
-if [ "$SONAR_ISSUES" -gt 0 ]; then
-  echo "SonarQube analysis found $SONAR_ISSUES issues. Invoking Lambda function..."
-  PAYLOAD='{"exit_status": 1}'
-  aws lambda invoke --function-name sonarlambda --payload "$(echo -n "$PAYLOAD" | base64)" output.txt
+if [ "$(echo "$SONAR_ISSUES_JSON" | jq length)" -gt 0 ]; then
+  echo "SonarQube analysis found issues. Invoking Lambda function..."
+  
+  # Create a message with issue details
+  MESSAGE="SonarQube analysis found the following issues:"
+  MESSAGE+="$(echo "$SONAR_ISSUES_JSON" | jq -r '.[] | "\n\nIssue Key: \(.key)\nSeverity: \(.severity)\nMessage: \(.message)"')"
+  
+  aws lambda invoke --function-name sonarlambda --payload "{\"exit_status\": 1, \"message\": \"$MESSAGE\"}" output.txt
 else
   echo "SonarQube analysis succeeded. No issues found."
 fi
