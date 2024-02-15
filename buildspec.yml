@@ -17,7 +17,7 @@ phases:
   post_build:
     commands:
       - sonar-scanner -Dsonar.projectKey=arjit547_react-repo123 -Dsonar.organization=arjit547 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN}
-      - chmod +x sonar_analysis.sh
+      #- chmod +x sonar_analysis.sh
       #- ./sonar_analysis.sh  # Execute the shell script
 
 artifacts:
